@@ -48,7 +48,7 @@ export function VideoSection() {
 
         <div className="mt-6 flex items-center justify-center gap-3">
           <Button asChild>
-            <a href="/results">Check Today’s Results</a>
+            <a href="/results">Check Today&apos;s Results</a>
           </Button>
           <Button variant="outline" asChild>
             <a href="/#how-it-works" aria-label="Learn how it works section">
