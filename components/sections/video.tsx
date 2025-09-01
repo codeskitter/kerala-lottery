@@ -21,15 +21,27 @@ export function VideoSection() {
           <div className="rounded-lg overflow-hidden bg-black">
             {/* 16:9 responsive frame */}
             <div className="relative w-full aspect-video">
-              <iframe
-                className="absolute inset-0 h-full w-full"
-                src="https://www.youtube-nocookie.com/embed/VIDEO_ID?rel=0&modestbranding=1&color=white"
-                title="Kerala Lottery overview video"
-                loading="lazy"
-                referrerPolicy="no-referrer"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              />
+              {/* swap YouTube iframe for native HTML5 video with poster and controls */}
+              <video
+                className="absolute inset-0 h-full w-full object-cover"
+                controls
+                playsInline
+                preload="metadata"
+                poster="/kerala-lottery-overview-poster.png"
+                aria-label="Kerala Lottery overview video"
+              >
+                <source src="/videos/intro.mp4" type="video/mp4" />
+                {/*
+                <track
+                  kind="captions"
+                  src="/videos/intro.vtt"
+                  srcLang="en"
+                  label="English captions"
+                  default
+                />
+                */}
+                Your browser does not support the video tag.
+              </video>
             </div>
           </div>
         </div>
@@ -39,13 +51,8 @@ export function VideoSection() {
             <a href="/results">Check Today’s Results</a>
           </Button>
           <Button variant="outline" asChild>
-            <a
-              href="https://www.youtube.com/watch?v=VIDEO_ID"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Open video on YouTube in a new tab"
-            >
-              Watch on YouTube
+            <a href="/#how-it-works" aria-label="Learn how it works section">
+              Learn how it works
             </a>
           </Button>
         </div>
