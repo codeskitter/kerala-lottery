@@ -35,7 +35,7 @@ export function VideoSection() {
                     aria-label="Kerala Lottery highlight video 1"
                   >
                     <source
-                      src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Video%202025-09-02%20at%2018.52.04_a8b1ccce-QEMONxiPcubiBKdzt2fZ313DgGGBgr.mp4"
+                      src="/video1.mp4"
                       type="video/mp4"
                     />
                     Your browser does not support the video tag.
@@ -54,7 +54,7 @@ export function VideoSection() {
                     aria-label="Kerala Lottery highlight video 2"
                   >
                     <source
-                      src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Video%202025-09-02%20at%2018.52.04_a8b1ccce-25AXPSXKrDpkl5FHyCx48xxYmnDdSF.mp4"
+                      src="/video2.mp4"
                       type="video/mp4"
                     />
                     Your browser does not support the video tag.
