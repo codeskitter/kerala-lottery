@@ -5,38 +5,38 @@ import Link from "next/link"
 
 const slides = [
   {
-    src: "/images/slider/1.jpeg",
-    alt: "Kerala lottery ticket - orange theme",
-    cta: { href: "/buy-ticket", label: "Buy Ticket Now" },
-  },
-  {
-    src: "/images/slider/2.jpeg",
-    alt: "Kerala lottery ticket - Akshaya green",
-    cta: { href: "/buy-ticket", label: "Buy Ticket Now" },
-  },
-  {
-    src: "/images/slider/3.jpeg",
-    alt: "Kerala lottery ticket - WinWin orange",
-    cta: { href: "/buy-ticket", label: "Buy Ticket Now" },
-  },
-  {
-    src: "/images/slider/4.jpeg",
-    alt: "Kerala lottery ticket - Nirmal blue",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-02%20at%2018.52.07_203c77d6.jpg-1vZpdKC7tKEhPD6xoYANIy0qkisKG1.jpeg",
+    alt: "Officials presenting Kerala lottery bumper poster at a press event",
     cta: { href: "/results", label: "Check Live Results" },
   },
   {
-    src: "/images/slider/5.jpeg",
-    alt: "Kerala lottery ticket - Nirmal variant",
-    cta: { href: "/buy-ticket", label: "Buy Ticket" },
-  },
-  {
-    src: "/images/slider/6.jpeg",
-    alt: "Kerala lottery ticket - Karunya purple",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-02%20at%2018.52.05_85201168.jpg-pDvT3BP78KbEeQmMlpMMy5KigIxjPd.jpeg",
+    alt: "Group celebrating inside a shop while holding a lottery ticket",
     cta: { href: "/buy-ticket", label: "Buy Ticket Now" },
   },
   {
-    src: "/images/slider/7.jpeg",
-    alt: "Kerala lotteries event photo",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-02%20at%2018.52.07_b79e9f08.jpg-D36E8zE5RXNz0xpANoCTJYLefzd8SM.jpeg",
+    alt: "Group holding a large Kerala lottery banner during an indoor event",
+    cta: { href: "/buy-ticket", label: "Buy Ticket Now" },
+  },
+  {
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-02%20at%2018.52.05_e012639f.jpg-BzN0SKp6lriMpxFq8u3Gha2c2oJJI4.jpeg",
+    alt: "Smiling person raising a lottery ticket with another person beside",
+    cta: { href: "/results", label: "Check Live Results" },
+  },
+  {
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-02%20at%2018.52.07_26824cdf.jpg-gGYdAb5gtCt0W00cRoeCf8fEJuQvIU.jpeg",
+    alt: "Officials holding a colorful Kerala lottery banner at a function",
+    cta: { href: "/buy-ticket", label: "Buy Ticket" },
+  },
+  {
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-02%20at%2018.52.06_c0447d52.jpg-JDtOwMgxWpC81JIlGJQuth6QHUgUXH.jpeg",
+    alt: "Officials displaying a Kerala lottery bumper poster on a desk",
+    cta: { href: "/results", label: "Check Live Results" },
+  },
+  {
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-02%20at%2018.52.06_f972c04e.jpg-4lrhVMznsklpgKoSdo02odrBPnNrQb.jpeg",
+    alt: "Person happily holding up a lottery ticket inside a shop",
     cta: { href: "/buy-ticket", label: "Buy Ticket Now" },
   },
 ]
@@ -68,6 +68,7 @@ export function ImageSlider() {
               className="object-cover"
               priority={i === 0}
               sizes="(max-width: 768px) 100vw, 100vw"
+              unoptimized
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-white/40 to-white/0" />
             <div className="absolute bottom-4 left-1/2 z-[1] -translate-x-1/2 sm:bottom-5">

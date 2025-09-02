@@ -14,41 +14,60 @@ export function VideoSection() {
         </div>
 
         <div
-          className="relative rounded-xl border bg-gradient-to-br from-emerald-600/15 to-teal-600/10 p-1 shadow-sm"
+          className="relative rounded-xl border bg-gradient-to-br from-red-600/15 to-orange-500/10 p-1 shadow-sm"
           role="region"
-          aria-label="Product video"
+          aria-label="Product videos"
         >
           <div className="rounded-lg overflow-hidden bg-black">
-            {/* 16:9 responsive frame */}
-            <div className="relative w-full aspect-video">
-              {/* swap YouTube iframe for native HTML5 video with poster and controls */}
-              <video
-                className="absolute inset-0 h-full w-full object-cover"
-                controls
-                playsInline
-                preload="metadata"
-                poster="/kerala-lottery-overview-poster.png"
-                aria-label="Kerala Lottery overview video"
-              >
-                <source src="/videos/intro.mp4" type="video/mp4" />
-                {/*
-                <track
-                  kind="captions"
-                  src="/videos/intro.vtt"
-                  srcLang="en"
-                  label="English captions"
-                  default
-                />
-                */}
-                Your browser does not support the video tag.
-              </video>
+            {/* Horizontal scroll-snap on mobile, centered items on larger screens */}
+            <div
+              className="flex gap-4 overflow-x-auto p-2 md:p-3 snap-x snap-mandatory scroll-p-4"
+              aria-label="Video carousel"
+            >
+              {/* Video 1 */}
+              <div className="snap-center shrink-0 w-full md:w-[720px]">
+                <div className="relative w-full aspect-video rounded-lg overflow-hidden">
+                  <video
+                    className="absolute inset-0 h-full w-full object-cover"
+                    controls
+                    playsInline
+                    preload="metadata"
+                    aria-label="Kerala Lottery highlight video 1"
+                  >
+                    <source
+                      src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Video%202025-09-02%20at%2018.52.04_a8b1ccce-QEMONxiPcubiBKdzt2fZ313DgGGBgr.mp4"
+                      type="video/mp4"
+                    />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              </div>
+
+              {/* Video 2 */}
+              <div className="snap-center shrink-0 w-full md:w-[720px]">
+                <div className="relative w-full aspect-video rounded-lg overflow-hidden">
+                  <video
+                    className="absolute inset-0 h-full w-full object-cover"
+                    controls
+                    playsInline
+                    preload="metadata"
+                    aria-label="Kerala Lottery highlight video 2"
+                  >
+                    <source
+                      src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Video%202025-09-02%20at%2018.52.04_a8b1ccce-25AXPSXKrDpkl5FHyCx48xxYmnDdSF.mp4"
+                      type="video/mp4"
+                    />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         <div className="mt-6 flex items-center justify-center gap-3">
           <Button asChild>
-            <a href="/results">Check Today&apos;s Results</a>
+            <a href="/results">Check Today’s Results</a>
           </Button>
           <Button variant="outline" asChild>
             <a href="/#how-it-works" aria-label="Learn how it works section">

@@ -10,6 +10,7 @@ import { Testimonials } from "@/components/sections/testimonials"
 import { FAQ } from "@/components/sections/faq"
 import { FooterCTA } from "@/components/sections/footer-cta"
 import { VideoSection } from "@/components/sections/video"
+import { BumperOfferSection } from "@/components/sections/bumper-offer"
 // import { SiteFooter } from "@/components/site-footer"
 
 export default function HomePage() {
@@ -18,7 +19,8 @@ export default function HomePage() {
       {/* Image slider at the very top */}
       <ImageSlider />
       <Hero />
-      {/* Insert the new video section right below the hero */}
+      {/* Insert the new bumper offer section right below the hero */}
+      <BumperOfferSection />
       <VideoSection />
       <ResultsCTA />
       <PrizesGrid />

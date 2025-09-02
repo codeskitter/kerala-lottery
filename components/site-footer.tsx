@@ -7,15 +7,12 @@ export function SiteFooter() {
       {/* CTA band */}
       <div className="mx-auto max-w-6xl px-4 py-16 text-center">
         <h2 className="text-pretty text-3xl font-semibold md:text-4xl">
-          Ready to <span className="text-[#F4C430]">Change Your Life?</span>
+          Ready to <span className="text-brand">Change Your Life?</span>
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
           Don&apos;t miss your chance to win big with Mega Kerala Lottery. Buy your ticket now!
         </p>
-        <Link
-          href="/buy-ticket"
-          className="mt-6 inline-flex items-center justify-center rounded-full bg-[#F4C430] px-6 py-3 font-medium text-black shadow-sm hover:opacity-90"
-        >
+        <Link href="/buy-ticket" className="mt-6 btn btn-brand inline-flex items-center justify-center">
           Buy Ticket Now
           <span className="ml-2">→</span>
         </Link>
@@ -28,7 +25,7 @@ export function SiteFooter() {
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xl font-extrabold tracking-tight">MEGA KERALA</span>
-              <span className="rounded bg-[#F4C430] px-2 py-0.5 text-xs font-semibold text-black">LOTTERY</span>
+              <span className="rounded bg-brand px-2 py-0.5 text-xs font-semibold text-white">LOTTERY</span>
             </div>
             <p className="mt-3 max-w-xs text-sm text-muted-foreground">
               Experience the thrill of winning with Kerala&apos;s premier lottery platform. Secure, transparent, and
@@ -50,7 +47,7 @@ export function SiteFooter() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-semibold text-[#F4C430]">Quick Links</h3>
+            <h3 className="font-semibold text-brand">Quick Links</h3>
             <ul className="mt-3 space-y-2 text-sm">
               <li>
                 <Link href="/" className="hover:underline">
@@ -92,7 +89,7 @@ export function SiteFooter() {
 
           {/* Legal */}
           <div>
-            <h3 className="font-semibold text-[#F4C430]">Legal</h3>
+            <h3 className="font-semibold text-brand">Legal</h3>
             <ul className="mt-3 space-y-2 text-sm">
               <li>
                 <Link href="#" className="hover:underline">
@@ -119,7 +116,7 @@ export function SiteFooter() {
 
           {/* Contact */}
           <div>
-            <h3 className="font-semibold text-[#F4C430]">Contact Us</h3>
+            <h3 className="font-semibold text-brand">Contact Us</h3>
             <ul className="mt-3 space-y-3 text-sm">
               <li className="flex items-start gap-2">
                 <Mail className="mt-0.5 h-4 w-4" />
