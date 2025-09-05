@@ -1,55 +1,53 @@
+"use client"
+import useSWR from "swr"
+
+const fetcher = (url: string) => fetch(url).then((r) => r.json())
+
 export function Testimonials() {
-  const items = [
-    {
-      name: "Laxman shankar",
-      meta: "Tamilnadu | Age: 52",
-      quote:
-        "This lottery win was a miracle! It allowed me to secure my family's future and live without financial worries.",
-      avatar: "/images/avatar-1.png",
-    },
-    {
-      name: "Rajshekhar Basu",
-      meta: "Kolkata, West Bengal | Age: 29",
-      quote: "I never believed in luck until I won the lottery. It's been a life-changing experience!",
-      avatar: "/images/avatar-2.png",
-    },
-    {
-      name: "Rajguru dhar",
-      meta: "Jammu & Kashmir | Age: 37",
-      quote: "Winning gave me the chance to retire early and travel the world with my family!",
-      avatar: "/images/avatar-3.png",
-    },
-  ]
+  const { data: testimonials } = useSWR("/api/admin/content/testimonials", fetcher)
+
   return (
     <section className="relative">
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-transparent to-gray-50" />
-      <div className="mx-auto max-w-6xl px-4 py-14">
-        <h3 className="font-heading text-center text-3xl sm:text-4xl font-extrabold">
-          Winner <span className="text-brand">Testimonials</span>
-        </h3>
-        <p className="mx-auto mt-3 max-w-2xl text-center text-muted">
-          Discover the inspiring stories of our lucky winners whose lives were transformed by their lottery wins.
+
+      <div className="mx-auto max-w-6xl px-4 py-12">
+        <h2 className="text-center text-3xl font-bold">
+          What Our <span className="text-amber-500">Winners Say</span>
+        </h2>
+        <p className="mt-3 text-center text-muted-foreground">
+          Hear from our lottery winners about their life-changing experiences.
         </p>
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((t) => (
-            <figure key={t.name} className="card p-6 text-center">
-              <div className="mx-auto -mt-10 mb-2 size-16 overflow-hidden rounded-full ring-4 ring-white">
-                <img
-                  src={t.avatar || "/placeholder.svg"}
-                  alt={`${t.name} avatar`}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <figcaption className="font-heading text-base font-semibold">{t.name}</figcaption>
-              <div className="mt-1 text-xs text-muted">{t.meta}</div>
-              <blockquote className="mt-3 text-sm italic text-[#4b5563]">“{t.quote}”</blockquote>
-            </figure>
-          ))}
-        </div>
-        <div className="mt-6 flex justify-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-[var(--brand)]" />
-          <span className="h-2 w-2 rounded-full bg-gray-300" />
-          <span className="h-2 w-2 rounded-full bg-gray-300" />
+
+        <div className="mt-8 grid gap-6 md:grid-cols-3">
+          {testimonials && testimonials.length > 0 ? (
+            testimonials
+              .filter((t: any) => t.is_active)
+              .map((item: any) => (
+                <div key={item.id} className="rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
+                  <div className="flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-full bg-muted overflow-hidden">
+                      {item.avatar_url && (
+                        <img
+                          src={item.avatar_url || "/placeholder.svg"}
+                          alt={item.name}
+                          className="h-full w-full object-cover"
+                        />
+                      )}
+                    </div>
+                    <div>
+                      <div className="font-semibold">{item.name}</div>
+                      <div className="text-sm text-muted-foreground">{item.location}</div>
+                      {item.prize_amount && (
+                        <div className="text-xs text-amber-600">₹{item.prize_amount.toLocaleString()} Winner</div>
+                      )}
+                    </div>
+                  </div>
+                  <blockquote className="mt-4 italic text-muted-foreground">"{item.testimonial}"</blockquote>
+                </div>
+              ))
+          ) : (
+            <div className="col-span-full text-center text-muted-foreground">Loading testimonials...</div>
+          )}
         </div>
       </div>
     </section>

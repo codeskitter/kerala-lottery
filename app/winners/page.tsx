@@ -1,37 +1,25 @@
-export default function WinnersPage() {
-  const top = [
-    {
-      name: "Shyamal Giri",
-      region: "West Bengal",
-      ticket: "KL 865342",
-      prize: "12,00,000",
-    },
-    {
-      name: "Shaik Ejaz",
-      region: "West Bengal",
-      ticket: "KL332233",
-      prize: "12,00,000",
-    },
-    {
-      name: "Brijmohan Sharma",
-      region: "Himachal Pradesh",
-      ticket: "KL700007",
-      prize: "12 Lakh",
-    },
-  ]
+import { Suspense } from "react"
 
-  const all = [
-    ["Shyamal Giri", "KL 865342", "Kerala State Mega Lottery", "30/08/2025", "1200000"],
-    ["Shaik Ejaz", "KL332233", "Kerala State Mega Lottery", "30/08/2025", "1200000"],
-    ["Brijmohan Sharma", "KL700007", "Kerala State Mega Lottery", "30/08/2025", "12 Lakh"],
-    ["Ananta Nayak", "KL996632", "Kerala State Mega Lottery", "30/08/2025", "2500000"],
-    ["Ramu", "KL745678", "Kerala State Mega Lottery", "30/08/2025", "1200000"],
-    ["Manu T", "KL996642", "Kerala State Mega Lottery", "30/08/2025", "1200000"],
-    ["Raghavendra Guttedar", "KL101101", "Kerala State Mega Lottery", "30/08/2025", "1200000"],
-    ["Kamasamala senu chari", "KL__420", "Kerala State Mega Lottery", "30/08/2025", "1200000"],
-    ["Touseef Ahmad khan", "KL384699", "Kerala State Mega Lottery", "30/08/2025", "1200000"],
-    ["Rajesh vk", "KL952368", "Kerala State Mega Lottery", "30/08/2025", "1200000"],
-  ]
+async function getWinnersData() {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/admin/winners`, {
+      cache: "no-store",
+    })
+    if (!response.ok) return { topWinners: [], allWinners: [] }
+
+    const data = await response.json()
+    return {
+      topWinners: data.winners?.slice(0, 3) || [],
+      allWinners: data.winners || [],
+    }
+  } catch (error) {
+    console.error("Failed to fetch winners:", error)
+    return { topWinners: [], allWinners: [] }
+  }
+}
+
+async function WinnersContent() {
+  const { topWinners, allWinners } = await getWinnersData()
 
   return (
     <>
@@ -57,32 +45,39 @@ export default function WinnersPage() {
           </p>
 
           <div className="mt-8 grid gap-6 lg:grid-cols-3">
-            {top.map((w) => (
-              <article key={w.ticket} className="rounded-xl border border-black/10 bg-white p-6 shadow-sm">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100 text-yellow-700">
-                    <span className="text-sm font-semibold">🏆</span>
+            {topWinners.length > 0 ? (
+              topWinners.map((winner: any) => (
+                <article
+                  key={winner.ticket_number}
+                  className="rounded-xl border border-black/10 bg-white p-6 shadow-sm"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100 text-yellow-700">
+                      <span className="text-sm font-semibold">🏆</span>
+                    </div>
+                    <div>
+                      <h3 className="font-heading text-base font-semibold">{winner.winner_name}</h3>
+                      <p className="text-xs text-muted">Kerala</p>
+                    </div>
+                    <span className="ml-auto rounded-full bg-[#F4C430] px-2 py-0.5 text-xs font-semibold text-black">
+                      ₹{winner.prize_amount?.toLocaleString()}
+                    </span>
                   </div>
-                  <div>
-                    <h3 className="font-heading text-base font-semibold">{w.name}</h3>
-                    <p className="text-xs text-muted">{w.region}</p>
-                  </div>
-                  <span className="ml-auto rounded-full bg-[#F4C430] px-2 py-0.5 text-xs font-semibold text-black">
-                    {w.prize}
-                  </span>
-                </div>
-                <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <dt className="text-muted">Lottery:</dt>
-                    <dd>Kerala State Mega Lottery</dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted">Ticket:</dt>
-                    <dd className="font-medium">{w.ticket}</dd>
-                  </div>
-                </dl>
-              </article>
-            ))}
+                  <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <dt className="text-muted">Lottery:</dt>
+                      <dd>Kerala State Mega Lottery</dd>
+                    </div>
+                    <div>
+                      <dt className="text-muted">Ticket:</dt>
+                      <dd className="font-medium">{winner.ticket_number}</dd>
+                    </div>
+                  </dl>
+                </article>
+              ))
+            ) : (
+              <div className="col-span-3 text-center text-muted py-8">No winners data available yet.</div>
+            )}
           </div>
         </section>
 
@@ -107,25 +102,33 @@ export default function WinnersPage() {
                 </tr>
               </thead>
               <tbody>
-                {all.map((r, i) => (
-                  <tr key={i} className="border-b border-black/5 last:border-0 [&>td]:px-4 [&>td]:py-3">
-                    <td>
-                      <div className="flex items-center gap-3">
-                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/5">
-                          👤
-                        </span>
-                        <div>
-                          <div className="font-medium">{r[0]}</div>
-                          <div className="text-xs text-muted">Kerala</div>
+                {allWinners.length > 0 ? (
+                  allWinners.map((winner: any, i: number) => (
+                    <tr key={i} className="border-b border-black/5 last:border-0 [&>td]:px-4 [&>td]:py-3">
+                      <td>
+                        <div className="flex items-center gap-3">
+                          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/5">
+                            👤
+                          </span>
+                          <div>
+                            <div className="font-medium">{winner.winner_name}</div>
+                            <div className="text-xs text-muted">Kerala</div>
+                          </div>
                         </div>
-                      </div>
+                      </td>
+                      <td className="font-mono">{winner.ticket_number}</td>
+                      <td>Kerala State Mega Lottery</td>
+                      <td>{new Date(winner.created_at).toLocaleDateString()}</td>
+                      <td className="text-brand">₹{winner.prize_amount?.toLocaleString()}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="text-center py-8 text-muted">
+                      No winners data available yet.
                     </td>
-                    <td className="font-mono">{r[1]}</td>
-                    <td>{r[2]}</td>
-                    <td>{r[3]}</td>
-                    <td className="text-brand">{r[4]}</td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
@@ -140,39 +143,45 @@ export default function WinnersPage() {
           </p>
 
           <div className="mt-8 grid gap-6 md:grid-cols-2">
-            {[
-              {
-                name: "Shyamal Giri",
-                region: "West Bengal",
-                tag: "1200000 Winner",
-                quote: "Winning the Kerala State Mega Lottery lottery has been a life-changing experience!",
-                meta: "Won on 30/08/2025 · Kerala State Mega Lottery",
-              },
-              {
-                name: "Shaik Ejaz",
-                region: "West Bengal",
-                tag: "1200000 Winner",
-                quote: "Winning the Kerala State Mega Lottery lottery has been a life-changing experience!",
-                meta: "Won on 30/08/2025 · Kerala State Mega Lottery",
-              },
-            ].map((s) => (
-              <article key={s.name} className="rounded-xl border border-black/10 bg-white p-6 shadow-sm">
+            {topWinners.slice(0, 2).map((winner: any) => (
+              <article key={winner.ticket_number} className="rounded-xl border border-black/10 bg-white p-6 shadow-sm">
                 <div className="flex items-center gap-4">
                   <div className="h-12 w-12 rounded-full bg-black/5" aria-hidden />
                   <div className="flex-1">
-                    <div className="font-semibold">{s.name}</div>
-                    <div className="text-sm text-muted">{s.region}</div>
-                    <div className="text-xs text-amber-600">{s.tag}</div>
+                    <div className="font-semibold">{winner.winner_name}</div>
+                    <div className="text-sm text-muted">Kerala</div>
+                    <div className="text-xs text-amber-600">₹{winner.prize_amount?.toLocaleString()} Winner</div>
                   </div>
                 </div>
                 <div className="my-4 h-px bg-black/10" />
-                <blockquote className="italic text-muted">“{s.quote}”</blockquote>
-                <div className="mt-4 text-xs text-muted">{s.meta}</div>
+                <blockquote className="italic text-muted">
+                  "Winning the Kerala State Mega Lottery has been a life-changing experience!"
+                </blockquote>
+                <div className="mt-4 text-xs text-muted">
+                  Won on {new Date(winner.created_at).toLocaleDateString()} · Kerala State Mega Lottery
+                </div>
               </article>
             ))}
           </div>
         </section>
       </div>
     </>
+  )
+}
+
+export default function WinnersPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand mx-auto"></div>
+            <p className="mt-2 text-muted">Loading winners...</p>
+          </div>
+        </div>
+      }
+    >
+      <WinnersContent />
+    </Suspense>
   )
 }

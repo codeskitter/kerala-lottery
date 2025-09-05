@@ -1,19 +1,30 @@
+"use client"
+
 import Link from "next/link"
 
 export function ResultsCTA() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-rose-50 to-white">
-      <div className="mx-auto max-w-6xl px-4 py-14 text-center">
-        <h2 className="font-heading text-4xl sm:text-5xl font-extrabold text-[#0b0f19]">
-          Check <span className="text-accent">• Live</span> Results Now!
+    <section className="relative bg-background">
+      <div className="mx-auto max-w-5xl px-4 py-10 md:py-14 text-center">
+        <h2 className="text-balance text-2xl md:text-3xl font-semibold tracking-tight mb-4">
+          Check Your Lottery Result
         </h2>
-        <p className="mx-auto mt-3 max-w-2xl text-muted">Watch the winners being announced in real-time!</p>
-        <div className="mt-7">
-          <Link href="/results" className="btn btn-accent inline-flex items-center gap-2">
-            Check Live Results
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
+        <p className="text-muted-foreground mb-6">See live results instantly and verify your ticket securely.</p>
+        <div className="flex items-center justify-center">
+          <Link
+            href="/results"
+            className="group relative inline-flex items-center justify-center rounded-full px-8 py-4 text-base font-semibold text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 transform-gpu will-change-transform animate-scale-pulse"
+            aria-label="Check your lottery result live"
+          >
+            {/* multicolor animated background */}
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 rounded-full animate-gradient-shift bg-[linear-gradient(90deg,#065f46,#059669,#10b981,#34d399,#22c55e,#065f46)] bg-[length:300%_100%]"
+            />
+            {/* neon glow ring */}
+            <span aria-hidden="true" className="absolute inset-0 rounded-full neon-glow" />
+            {/* label with bulb-like blink */}
+            <span className="relative z-10 animate-bulb-blink">Check Your Lottery Result Live</span>
           </Link>
         </div>
       </div>

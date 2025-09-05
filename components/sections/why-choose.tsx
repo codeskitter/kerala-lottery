@@ -1,31 +1,46 @@
-const benefits = [
-  { title: "100% Secure & Trusted", desc: "Fully licensed and regulated with complete security and transparency." },
-  { title: "Instant Result Updates", desc: "Immediate notifications about draw results via SMS and email." },
-  { title: "Multiple Prizes to Win", desc: "Higher chances with multiple prize tiers in each draw." },
-  { title: "Easy Payment & Booking", desc: "UPI, cards, and net banking supported with a user-friendly flow." },
-]
+"use client"
+import useSWR from "swr"
+
+const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
 export function WhyChoose() {
+  const { data: sections } = useSWR("/api/admin/content/sections", fetcher)
+
+  const sectionsArray = Array.isArray(sections) ? sections : []
+  const whyChooseSection = sectionsArray.find((s: any) => s.section_key === "why_choose")
+
+  let benefits = []
+  try {
+    benefits = whyChooseSection?.content ? JSON.parse(whyChooseSection.content) : []
+    if (!Array.isArray(benefits)) benefits = []
+  } catch (error) {
+    console.error("Failed to parse benefits content:", error)
+    benefits = []
+  }
+
   return (
-    <section className="mx-auto max-w-6xl px-4 py-14">
-      <h3 className="font-heading text-center text-3xl sm:text-4xl font-extrabold">
-        Why Choose <span className="text-brand">Us?</span>
-      </h3>
-      <p className="mx-auto mt-3 max-w-2xl text-center text-muted">
-        We offer a premium lottery experience with multiple benefits.
-      </p>
-      <div className="mt-8 grid gap-5 sm:grid-cols-2">
-        {benefits.map((b) => (
-          <div key={b.title} className="card p-6">
-            <div className="mb-2 inline-flex h-10 w-10 items-center justify-center rounded-full bg-yellow-50 text-brand">
-              <svg width="18" height="18" viewBox="0 0 24 24">
-                <path d="M20 6 9 17l-5-5" stroke="currentColor" strokeWidth="2" fill="none" />
-              </svg>
+    <section className="mx-auto max-w-6xl px-4 py-12">
+      <div className="text-center">
+        <h2 className="font-heading text-3xl font-extrabold sm:text-4xl">
+          Why Choose <span className="text-brand">Us</span>
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {whyChooseSection?.subtitle ||
+            "Trusted by millions across Kerala for secure and transparent lottery experience."}
+        </p>
+      </div>
+
+      <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {benefits.length > 0 ? (
+          benefits.map((benefit: any, index: number) => (
+            <div key={index} className="card p-6 text-center">
+              <h3 className="font-heading text-lg font-semibold">{benefit.title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{benefit.desc}</p>
             </div>
-            <h4 className="font-heading text-base font-semibold">{b.title}</h4>
-            <p className="mt-1 text-sm text-muted">{b.desc}</p>
-          </div>
-        ))}
+          ))
+        ) : (
+          <div className="col-span-full text-center text-muted-foreground">Loading benefits...</div>
+        )}
       </div>
     </section>
   )

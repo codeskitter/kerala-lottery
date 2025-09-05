@@ -5,18 +5,7 @@ export function SiteFooter() {
   return (
     <footer className="bg-[#F6F6F6] text-foreground">
       {/* CTA band */}
-      <div className="mx-auto max-w-6xl px-4 py-16 text-center">
-        <h2 className="text-pretty text-3xl font-semibold md:text-4xl">
-          Ready to <span className="text-brand">Change Your Life?</span>
-        </h2>
-        <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
-          Don&apos;t miss your chance to win big with Mega Kerala Lottery. Buy your ticket now!
-        </p>
-        <Link href="/buy-ticket" className="mt-6 btn btn-brand inline-flex items-center justify-center">
-          Buy Ticket Now
-          <span className="ml-2">→</span>
-        </Link>
-      </div>
+      
 
       {/* footer content */}
       <div className="border-t border-black/10">
@@ -120,7 +109,7 @@ export function SiteFooter() {
             <ul className="mt-3 space-y-3 text-sm">
               <li className="flex items-start gap-2">
                 <Mail className="mt-0.5 h-4 w-4" />
-                <span>support@megakeralalottery.com</span>
+                <span>support@statekeralalotterygov.com</span>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="mt-0.5 h-4 w-4" />
@@ -130,6 +119,32 @@ export function SiteFooter() {
                 </span>
               </li>
             </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-black/10 bg-white">
+        <div className="mx-auto max-w-6xl px-4 py-4 text-xs leading-relaxed text-muted-foreground">
+          <div className="grid gap-3 md:grid-cols-2">
+            <p>
+              Disclaimer: Lottery is a game of chance. Please play responsibly and only if it is legal in your region.
+              Results and information are provided for convenience; winners must verify ticket numbers with the official
+              result publication from the Department of State Lotteries, Kerala.
+            </p>
+            <p className="md:text-right">
+              Support:{" "}
+              <a href="mailto:support@megakeralalottery.com" className="underline">
+                support@megakeralalottery.com
+              </a>{" "}
+              • Helpline:{" "}
+              <a href="tel:+918981761109" className="underline">
+                +919668643802
+              </a>
+            </p>
+          </div>
+          <div className="mt-2 flex flex-col items-start justify-between gap-1 border-t border-black/5 pt-2 text-[11px] md:flex-row">
+            <span>© {new Date().getFullYear()} Mega Kerala Lottery. All rights reserved.</span>
+            <span>By using this website you agree to our Terms, Privacy, and Refund Policy.</span>
           </div>
         </div>
       </div>

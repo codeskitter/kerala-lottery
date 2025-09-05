@@ -1,9 +1,11 @@
 import Image from "next/image"
 import Link from "next/link"
+import { LotteryStatusCheckSection } from "@/components/sections/lottery-status-check"
 
 export default function ResultsPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-14">
+      <LotteryStatusCheckSection />
       <div className="card p-8 text-center">
         <h1 className="font-heading text-3xl sm:text-4xl font-extrabold">
           Check <span className="text-accent">Live</span> Results Now!

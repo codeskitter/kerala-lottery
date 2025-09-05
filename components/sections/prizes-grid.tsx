@@ -1,60 +1,62 @@
-const prizes = [
-  {
-    tier: "1st Prize",
-    amount: "₹25 Cr",
-    desc: "The life-changing grand prize that can make all your dreams come true. (1 Person)",
-  },
-  {
-    tier: "2nd Prize",
-    amount: "₹10 Cr",
-    desc: "A substantial prize that can transform your financial future. (1 Person)",
-  },
-  { tier: "3rd Prize", amount: "₹3 Cr", desc: "A significant prize that can help you achieve your goals. (1 Person)" },
-]
-const lower = [
-  { tier: "4th Prize", amount: "₹25 Lakh", people: "12 Persons" },
-  { tier: "5th Prize", amount: "₹12 Lakh", people: "16 Persons" },
-  { tier: "6th Prize", amount: "₹1,50,000", people: "36 Persons" },
-  { tier: "7th Prize", amount: "₹1,25,000", people: "99 Persons" },
-  { tier: "8th Prize", amount: "₹1,00,000", people: "120 Persons" },
-  { tier: "9th Prize", amount: "₹75,000", people: "179 Persons" },
-  { tier: "10th Prize", amount: "₹50,000", people: "200 Persons" },
-  { tier: "11th Prize", amount: "₹40,000", people: "220 Persons" },
-  { tier: "12th Prize", amount: "₹30,000", people: "250 Persons" },
-  { tier: "13th Prize", amount: "₹20,000", people: "270 Persons" },
-  { tier: "14th Prize", amount: "₹10,000", people: "285 Persons" },
-  { tier: "15th Prize", amount: "₹5,000", people: "300 Persons" },
-]
+"use client"
+import useSWR from "swr"
+
+const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
 export function PrizesGrid() {
+  const { data: prizes } = useSWR("/api/admin/prizes", fetcher)
+
+  const prizeArray = Array.isArray(prizes) ? prizes : []
+
+  if (!prizeArray || prizeArray.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">Loading prize information...</p>
+      </div>
+    )
+  }
+
+  const topPrizes = prizeArray.slice(0, 3)
+  const lowerPrizes = prizeArray.slice(3)
+
   return (
-    <section className="mx-auto max-w-6xl px-4 py-14">
-      <h3 className="font-heading text-center text-3xl sm:text-4xl font-extrabold">
-        Mega <span className="text-brand">Prizes</span>
-      </h3>
-      <p className="mx-auto mt-3 max-w-2xl text-center text-muted">
-        Our lottery offers some of the biggest prize pools in India, with multiple chances to win.
-      </p>
+    <section className="mx-auto max-w-6xl px-4 py-12">
+      <div className="text-center">
+        <h2 className="font-heading text-3xl font-extrabold sm:text-4xl">
+          Prize <span className="text-brand">Structure</span>
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Multiple chances to win with our comprehensive prize tiers.
+        </p>
+      </div>
 
-      <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {prizes.map((p) => (
-          <div key={p.tier} className="card p-6">
-            <div className="label">{p.tier}</div>
-            <div className="mt-1 font-heading text-3xl font-extrabold text-brand">{p.amount}</div>
-            <p className="mt-4 text-sm text-muted">{p.desc}</p>
+      {/* Top 3 Prizes */}
+      <div className="mt-8 grid gap-6 md:grid-cols-3">
+        {topPrizes.map((prize: any) => (
+          <div key={prize.id} className="card p-6 text-center">
+            <h3 className="font-heading text-xl font-bold">{prize.tier}</h3>
+            <div className="mt-2 text-3xl font-extrabold text-brand">₹{prize.amount}</div>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {prize.description || `${prize.count} ${prize.count === 1 ? "Person" : "Persons"}`}
+            </p>
           </div>
         ))}
       </div>
 
-      <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {lower.map((p) => (
-          <div key={p.tier} className="card p-6">
-            <div className="label">{p.tier} 🏆</div>
-            <div className="mt-1 font-heading text-2xl font-extrabold">{p.amount}</div>
-            <p className="mt-2 text-xs text-muted">{p.people}</p>
-          </div>
-        ))}
-      </div>
+      {/* Lower Prizes Grid */}
+      {lowerPrizes.length > 0 && (
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {lowerPrizes.map((prize: any) => (
+            <div key={prize.id} className="flex items-center justify-between rounded-lg border bg-card p-4">
+              <div>
+                <div className="font-semibold">{prize.tier}</div>
+                <div className="text-sm text-muted-foreground">{prize.count} Persons</div>
+              </div>
+              <div className="font-bold text-brand">₹{prize.amount}</div>
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   )
 }

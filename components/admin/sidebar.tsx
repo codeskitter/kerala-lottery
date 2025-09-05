@@ -8,6 +8,9 @@ const links = [
   { href: "/admin/draws", label: "Draws" },
   { href: "/admin/results", label: "Results & Winners" },
   { href: "/admin/prizes", label: "Prizes" },
+  { href: "/admin/content", label: "Content" },
+  { href: "/admin/testimonials", label: "Testimonials" },
+  { href: "/admin/faqs", label: "FAQs" },
   { href: "/admin/settings", label: "Settings" },
 ]
 

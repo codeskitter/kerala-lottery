@@ -1,47 +1,38 @@
 "use client"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import useSWR from "swr"
 
-const faqs = [
-  {
-    q: "How do I purchase a lottery ticket?",
-    a: "Buy securely online via UPI, cards, or net banking from the Buy Ticket page.",
-  },
-  {
-    q: "When are the lottery draws conducted?",
-    a: "Daily draws are typically held at 3:00 PM with notifications sent instantly.",
-  },
-  {
-    q: "How do I claim my prize if I win?",
-    a: "Winners are contacted by our team with verified instructions and documentation.",
-  },
-  {
-    q: "Are the lottery results transparent?",
-    a: "Results are published publicly and draws are audited for fairness.",
-  },
-  {
-    q: "What is the validity period of a lottery ticket?",
-    a: "Please refer to the ticket terms; generally, claims must be made within 30 days.",
-  },
-]
+const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
 export function FAQ() {
+  const { data: faqs } = useSWR("/api/admin/content/faqs", fetcher)
+
+  const faqArray = Array.isArray(faqs) ? faqs : []
+
   return (
-    <section className="mx-auto max-w-6xl px-4 py-14">
-      <h3 className="font-heading text-center text-3xl sm:text-4xl font-extrabold">
-        Frequently Asked <span className="text-brand">Questions</span>
-      </h3>
-      <p className="mx-auto mt-3 max-w-2xl text-center text-muted">
-        Find answers to common questions about our lottery system.
-      </p>
-      <div className="mx-auto mt-8 max-w-3xl">
-        <Accordion type="single" collapsible className="w-full">
-          {faqs.map((f, idx) => (
-            <AccordionItem key={idx} value={`item-${idx}`} className="border-b">
-              <AccordionTrigger className="text-left text-[#111827]">{f.q}</AccordionTrigger>
-              <AccordionContent className="text-[#4b5563]">{f.a}</AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+    <section className="mx-auto max-w-4xl px-4 py-12">
+      <div className="text-center">
+        <h2 className="font-heading text-3xl font-extrabold sm:text-4xl">
+          Frequently Asked <span className="text-brand">Questions</span>
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">Get answers to common questions about our lottery system.</p>
+      </div>
+
+      <div className="mt-8">
+        {faqArray && faqArray.length > 0 ? (
+          <Accordion type="single" collapsible className="w-full">
+            {faqArray
+              .filter((faq: any) => faq.is_active)
+              .map((faq: any) => (
+                <AccordionItem key={faq.id} value={`item-${faq.id}`}>
+                  <AccordionTrigger className="text-left">{faq.question}</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">{faq.answer}</AccordionContent>
+                </AccordionItem>
+              ))}
+          </Accordion>
+        ) : (
+          <div className="text-center text-muted-foreground">Loading frequently asked questions...</div>
+        )}
       </div>
     </section>
   )

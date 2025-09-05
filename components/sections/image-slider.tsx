@@ -2,68 +2,49 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import useSWR from "swr"
 
-const slides = [
-  {
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-02%20at%2018.52.07_203c77d6.jpg-1vZpdKC7tKEhPD6xoYANIy0qkisKG1.jpeg",
-    alt: "Officials presenting Kerala lottery bumper poster at a press event",
-    cta: { href: "/results", label: "Check Live Results" },
-  },
-  {
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-02%20at%2018.52.05_85201168.jpg-pDvT3BP78KbEeQmMlpMMy5KigIxjPd.jpeg",
-    alt: "Group celebrating inside a shop while holding a lottery ticket",
-    cta: { href: "/buy-ticket", label: "Buy Ticket Now" },
-  },
-  {
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-02%20at%2018.52.07_b79e9f08.jpg-D36E8zE5RXNz0xpANoCTJYLefzd8SM.jpeg",
-    alt: "Group holding a large Kerala lottery banner during an indoor event",
-    cta: { href: "/buy-ticket", label: "Buy Ticket Now" },
-  },
-  {
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-02%20at%2018.52.05_e012639f.jpg-BzN0SKp6lriMpxFq8u3Gha2c2oJJI4.jpeg",
-    alt: "Smiling person raising a lottery ticket with another person beside",
-    cta: { href: "/results", label: "Check Live Results" },
-  },
-  {
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-02%20at%2018.52.07_26824cdf.jpg-gGYdAb5gtCt0W00cRoeCf8fEJuQvIU.jpeg",
-    alt: "Officials holding a colorful Kerala lottery banner at a function",
-    cta: { href: "/buy-ticket", label: "Buy Ticket" },
-  },
-  {
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-02%20at%2018.52.06_c0447d52.jpg-JDtOwMgxWpC81JIlGJQuth6QHUgUXH.jpeg",
-    alt: "Officials displaying a Kerala lottery bumper poster on a desk",
-    cta: { href: "/results", label: "Check Live Results" },
-  },
-  {
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-02%20at%2018.52.06_f972c04e.jpg-4lrhVMznsklpgKoSdo02odrBPnNrQb.jpeg",
-    alt: "Person happily holding up a lottery ticket inside a shop",
-    cta: { href: "/buy-ticket", label: "Buy Ticket Now" },
-  },
-]
+const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
 export function ImageSlider() {
+  const { data: carouselImages } = useSWR("/api/admin/content/carousel", fetcher)
+
+  const slides = Array.isArray(carouselImages) ? carouselImages.filter((img: any) => img.is_active) : []
+
   const [index, setIndex] = useState(0)
+
   useEffect(() => {
+    if (slides.length === 0) return
     const id = setInterval(() => setIndex((i) => (i + 1) % slides.length), 5000)
     return () => clearInterval(id)
-  }, [])
+  }, [slides.length])
+
   const go = (i: number) => setIndex((i + slides.length) % slides.length)
+
+  if (slides.length === 0) {
+    return (
+      <section className="relative w-full">
+        <div className="relative aspect-[16/9] w-full overflow-hidden md:aspect-[21/9] bg-muted flex items-center justify-center">
+          <p className="text-muted-foreground">Loading carousel images...</p>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section className="relative w-full">
-      {/* Use taller 16:9 on small screens, ultra-wide 21:9 on md+ */}
       <div className="relative aspect-[16/9] w-full overflow-hidden md:aspect-[21/9]">
-        {slides.map((s, i) => (
+        {slides.map((slide: any, i: number) => (
           <div
-            key={s.src}
+            key={slide.id}
             className={
               "absolute inset-0 transition-opacity duration-700 " + (i === index ? "opacity-100" : "opacity-0")
             }
             aria-hidden={i !== index}
           >
             <Image
-              src={s.src || "/placeholder.svg"}
-              alt={s.alt}
+              src={slide.image_url || "/placeholder.svg"}
+              alt={slide.alt_text || `Slide ${i + 1}`}
               fill
               className="object-cover"
               priority={i === 0}
@@ -71,14 +52,16 @@ export function ImageSlider() {
               unoptimized
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-white/40 to-white/0" />
-            <div className="absolute bottom-4 left-1/2 z-[1] -translate-x-1/2 sm:bottom-5">
-              <Link href={s.cta.href} className="btn btn-brand inline-flex items-center gap-2" aria-label={s.cta.label}>
-                {s.cta.label}
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              </Link>
-            </div>
+            {slide.cta_text && slide.cta_link && (
+              <div className="absolute bottom-4 left-1/2 z-[1] -translate-x-1/2 sm:bottom-5">
+                <Link
+                  href={slide.cta_link}
+                  className="rounded-full bg-brand px-6 py-2 text-sm font-semibold text-white hover:bg-brand/90"
+                >
+                  {slide.cta_text}
+                </Link>
+              </div>
+            )}
           </div>
         ))}
 
@@ -104,7 +87,7 @@ export function ImageSlider() {
 
         {/* Dots */}
         <div className="absolute bottom-3 left-1/2 z-[2] flex -translate-x-1/2 gap-2">
-          {slides.map((_, i) => (
+          {slides.map((_: any, i: number) => (
             <button
               key={i}
               aria-label={`Go to slide ${i + 1}`}
