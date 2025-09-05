@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
-const ADMIN_COOKIE = "admin_token"
+const ADMIN_COOKIE = "admin_session"
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -18,16 +18,16 @@ export function middleware(request: NextRequest) {
 
   const session = request.cookies.get(ADMIN_COOKIE)?.value
 
-  // if ((isAdminRoute || isAdminAPI) && !session) {
-  //   // For API routes, return 401 instead of redirecting
-  //   if (isAdminAPI) {
-  //     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  //   }
-  //   const url = request.nextUrl.clone()
-  //   url.pathname = "/admin/login"
-  //   url.searchParams.set("next", pathname)
-  //   return NextResponse.redirect(url)
-  // }
+  if ((isAdminRoute || isAdminAPI) && !session) {
+    // For API routes, return 401 instead of redirecting
+    if (isAdminAPI) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+    const url = request.nextUrl.clone()
+    url.pathname = "/admin/login"
+    url.searchParams.set("next", pathname)
+    return NextResponse.redirect(url)
+  }
 
   return NextResponse.next()
 }

@@ -1,11 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { query } from "@/app/api/admin/_content-data"
+import { queryAll, insertRecord } from "@/lib/database"
 
 export async function GET() {
   try {
-    const images = await query(`
+    const images = await queryAll(`
       SELECT * FROM carousel_images 
+      WHERE is_active = TRUE
       ORDER BY display_order ASC, created_at DESC
     `)
     return NextResponse.json(images)
@@ -24,15 +25,16 @@ export async function POST(request: NextRequest) {
 
     const { image_url, alt_text, cta_text, cta_link, display_order, is_active } = await request.json()
 
-    const result = await query(
-      `
-      INSERT INTO carousel_images (image_url, alt_text, cta_text, cta_link, display_order, is_active)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `,
-      [image_url, alt_text, cta_text, cta_link, display_order || 0, is_active !== false],
-    )
+    const imageId = await insertRecord("carousel_images", {
+      image_url,
+      alt_text,
+      cta_text,
+      cta_link,
+      display_order: display_order || 0,
+      is_active: is_active !== false,
+    })
 
-    return NextResponse.json({ success: true, id: result.insertId })
+    return NextResponse.json({ success: true, id: imageId })
   } catch (error) {
     console.error("Error creating carousel image:", error)
     return NextResponse.json({ error: "Failed to create carousel image" }, { status: 500 })

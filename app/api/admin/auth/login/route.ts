@@ -8,9 +8,9 @@ export async function POST(req: Request) {
   const password = String(body?.password || "")
   const valid = password && password === (process.env.ADMIN_PASSWORD || DEFAULT_PASSWORD)
 
-  // if (!valid) {
-  //   return NextResponse.json({ ok: false, error: "Invalid password" }, { status: 401 })
-  // }
+  if (!valid) {
+    return NextResponse.json({ ok: false, error: "Invalid password" }, { status: 401 })
+  }
 
   const res = NextResponse.json({ ok: true })
   res.cookies.set({
