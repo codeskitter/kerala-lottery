@@ -23,7 +23,7 @@ const links = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/tickets", label: "Ticket Management", icon: Ticket, badge: 3 },
   { href: "/admin/users", label: "User Management", icon: Users },
-  { href: "/admin/contacts", label: "Contact Management", icon: MessageSquare, badge: 5 },
+  { href: "/admin/carousel", label: "Slider Image", icon: MessageSquare, badge: 5 },
   { href: "/admin/payments", label: "Payment Management", icon: CreditCard },
   { href: "/admin/draws", label: "Draws", icon: Trophy },
   { href: "/admin/results", label: "Results & Winners", icon: Trophy },

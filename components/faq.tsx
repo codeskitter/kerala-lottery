@@ -1,12 +1,18 @@
 "use client"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import useSWR from "swr"
+import type { ContentData } from "@/lib/content"
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
-export function FAQ() {
-  const { data: faqs } = useSWR("/api/admin/content/faqs", fetcher)
+interface FAQProps {
+  contentData?: ContentData
+}
 
+export function FAQ({ contentData }: FAQProps) {
+  const { data: apiFaqs } = useSWR(contentData ? null : "/api/admin/content/faqs", fetcher)
+
+  const faqs = contentData?.faqs || apiFaqs || []
   const faqArray = Array.isArray(faqs) ? faqs : []
 
   return (

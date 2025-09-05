@@ -19,11 +19,19 @@ type ContentSection = {
   is_active: boolean
 }
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json())
+const fetcher = async (url: string) => {
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error("Failed to fetch")
+  }
+  const data = await response.json()
+  // Ensure we always return an array
+  return Array.isArray(data) ? data : []
+}
 
 export default function AdminContentPage() {
   const { toast } = useToast()
-  const { data, mutate, isLoading } = useSWR<ContentSection[]>("/api/admin/content/sections", fetcher)
+  const { data = [], mutate, isLoading, error } = useSWR<ContentSection[]>("/api/admin/content/sections", fetcher)
   const [form, setForm] = useState<Partial<ContentSection>>({
     section_key: "",
     section_name: "",
@@ -216,6 +224,8 @@ export default function AdminContentPage() {
         <div className="rounded-lg border bg-card overflow-x-auto">
           {isLoading ? (
             <div className="p-4 text-sm">Loading...</div>
+          ) : error ? (
+            <div className="p-4 text-sm text-red-600">Failed to load content sections. Please try again.</div>
           ) : (
             <table className="min-w-full text-sm">
               <thead>
@@ -229,37 +239,45 @@ export default function AdminContentPage() {
                 </tr>
               </thead>
               <tbody className="[&_tr]:border-b">
-                {(data || []).map((section) => (
-                  <tr key={section.id}>
-                    <td className="py-2 pr-4 font-mono">{section.section_key}</td>
-                    <td className="py-2 pr-4">{section.section_name}</td>
-                    <td className="py-2 pr-4">{section.title}</td>
-                    <td className="py-2 pr-4">{section.display_order}</td>
-                    <td className="py-2 pr-4">
-                      <span
-                        className={`nav-pill ${section.is_active ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}
-                      >
-                        {section.is_active ? "Active" : "Inactive"}
-                      </span>
-                    </td>
-                    <td className="py-2 pr-4">
-                      <div className="flex items-center gap-2">
-                        <button
-                          className="h-8 px-3 rounded-md border hover:bg-accent"
-                          onClick={() => startEdit(section)}
+                {Array.isArray(data) && data.length > 0 ? (
+                  data.map((section) => (
+                    <tr key={section.id}>
+                      <td className="py-2 pr-4 font-mono">{section.section_key}</td>
+                      <td className="py-2 pr-4">{section.section_name}</td>
+                      <td className="py-2 pr-4">{section.title}</td>
+                      <td className="py-2 pr-4">{section.display_order}</td>
+                      <td className="py-2 pr-4">
+                        <span
+                          className={`nav-pill ${section.is_active ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}
                         >
-                          Edit
-                        </button>
-                        <button
-                          className="h-8 px-3 rounded-md border text-white bg-[var(--accent-red)] hover:opacity-90"
-                          onClick={() => onDelete(section.id)}
-                        >
-                          Delete
-                        </button>
-                      </div>
+                          {section.is_active ? "Active" : "Inactive"}
+                        </span>
+                      </td>
+                      <td className="py-2 pr-4">
+                        <div className="flex items-center gap-2">
+                          <button
+                            className="h-8 px-3 rounded-md border hover:bg-accent"
+                            onClick={() => startEdit(section)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="h-8 px-3 rounded-md border text-white bg-[var(--accent-red)] hover:opacity-90"
+                            onClick={() => onDelete(section.id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6} className="py-4 text-center text-gray-500">
+                      No content sections found. Add your first section above.
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           )}

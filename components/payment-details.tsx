@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { getSiteConfig, type SiteConfig } from "@/lib/site-config"
 
 function CopyBtn({ value, label }: { value: string; label: string }) {
   const [copied, setCopied] = useState(false)
@@ -24,13 +25,17 @@ function CopyBtn({ value, label }: { value: string; label: string }) {
 }
 
 export default function PaymentDetailsSection() {
-  const upiId = process.env.NEXT_PUBLIC_UPI_ID || "upi@ybl"
-  const amount = process.env.NEXT_PUBLIC_REGISTRATION_AMOUNT || "₹499"
-  const bankName = process.env.NEXT_PUBLIC_BANK_NAME || "Bank Name"
-  const accountName = process.env.NEXT_PUBLIC_ACCOUNT_NAME || "Account Name"
-  const accountNumber = process.env.NEXT_PUBLIC_ACCOUNT_NUMBER || "0000000000"
-  const ifsc = process.env.NEXT_PUBLIC_IFSC || "IFSC0000"
-  const payPhone = process.env.NEXT_PUBLIC_PAYMENT_PHONE || "+91 90000 00000"
+  const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null)
+
+  useEffect(() => {
+    getSiteConfig().then(setSiteConfig)
+  }, [])
+
+  if (!siteConfig) {
+    return <div className="w-full bg-background py-12 text-center">Loading payment details...</div>
+  }
+
+  const amount = `₹${siteConfig.registration_amount}`
 
   return (
     <section className="w-full bg-background">
@@ -48,12 +53,16 @@ export default function PaymentDetailsSection() {
 
             <div className="mt-6 flex flex-col items-center">
               <div className="rounded-xl bg-white p-2 ring-2 ring-sky-400">
-                <img src="/images/upi-qr.jpg" alt="UPI QR code for payment" className="h-auto w-48 rounded-md" />
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=${siteConfig.upi_id}&pn=${encodeURIComponent(siteConfig.account_name)}&am=${siteConfig.registration_amount}&cu=INR`}
+                  alt="UPI QR code for payment"
+                  className="h-auto w-48 rounded-md"
+                />
               </div>
 
               <a
-                href="/images/upi-qr.jpg"
-                download
+                href={`https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=upi://pay?pa=${siteConfig.upi_id}&pn=${encodeURIComponent(siteConfig.account_name)}&am=${siteConfig.registration_amount}&cu=INR`}
+                download="upi-qr-code.png"
                 className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-green-600 to-emerald-500 px-6 py-2 text-sm font-medium text-white shadow transition-colors hover:from-green-700 hover:to-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-400"
                 aria-label="Download UPI QR Code"
               >
@@ -67,12 +76,12 @@ export default function PaymentDetailsSection() {
                 <label className="label">UPI ID</label>
                 <div className="flex items-center gap-2">
                   <input
-                    value={upiId}
+                    value={siteConfig.upi_id}
                     readOnly
                     className="w-full rounded-md border bg-white px-3 py-2 text-sm"
                     aria-label="UPI ID"
                   />
-                  <CopyBtn value={upiId} label="UPI ID" />
+                  <CopyBtn value={siteConfig.upi_id} label="UPI ID" />
                 </div>
               </div>
             </div>
@@ -84,18 +93,18 @@ export default function PaymentDetailsSection() {
             <div className="mt-4 text-lg font-semibold text-foreground">GPay • PhonePe • Paytm</div>
 
             <a
-              href={`tel:${payPhone.replace(/\\s+/g, "")}`}
+              href={`tel:${siteConfig.payment_phone.replace(/\s+/g, "")}`}
               className="mt-3 inline-block text-lg font-bold text-emerald-600 underline decoration-emerald-300 hover:text-emerald-700"
               aria-label="Payment phone number"
             >
-              {payPhone}
+              {siteConfig.payment_phone}
             </a>
 
             <p className="mt-2 text-sm text-muted-foreground">Send {amount} to this number</p>
             <div className="mt-1 text-base font-semibold text-emerald-600">{amount}</div>
 
             <div className="mt-5 flex items-center justify-center gap-2">
-              <CopyBtn value={payPhone} label="Phone Number" />
+              <CopyBtn value={siteConfig.payment_phone} label="Phone Number" />
             </div>
           </div>
 
@@ -104,17 +113,17 @@ export default function PaymentDetailsSection() {
             <h3 className="text-center font-heading text-lg font-semibold text-foreground">Bank Transfer</h3>
             <dl className="mt-6 grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
               <dt className="text-muted-foreground">Bank</dt>
-              <dd className="text-foreground">{bankName}</dd>
+              <dd className="text-foreground">{siteConfig.bank_name}</dd>
               <dt className="text-muted-foreground">Account Name</dt>
-              <dd className="text-foreground">{accountName}</dd>
+              <dd className="text-foreground">{siteConfig.account_name}</dd>
               <dt className="text-muted-foreground">Account No.</dt>
-              <dd className="text-foreground">{accountNumber}</dd>
+              <dd className="text-foreground">{siteConfig.account_number}</dd>
               <dt className="text-muted-foreground">IFSC</dt>
-              <dd className="text-foreground">{ifsc}</dd>
+              <dd className="text-foreground">{siteConfig.ifsc_code}</dd>
             </dl>
             <div className="mt-5 flex flex-wrap justify-center gap-2">
-              <CopyBtn value={accountNumber} label="Account Number" />
-              <CopyBtn value={ifsc} label="IFSC" />
+              <CopyBtn value={siteConfig.account_number} label="Account Number" />
+              <CopyBtn value={siteConfig.ifsc_code} label="IFSC" />
             </div>
             <div className="mt-4 text-center text-xs text-muted-foreground">
               Transfer exactly {amount} and keep your Transaction/UTR ID for confirmation.

@@ -1,5 +1,3 @@
-// Content fetching utilities for dynamic content
-
 export type ContentData = {
   sections: Array<{
     id: string

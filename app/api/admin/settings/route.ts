@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
-import { queryFirst, updateRecord, queryAll } from "@/lib/database"
+import { queryFirst, updateRecord, queryAll, insertRecord } from "@/lib/database"
+import { clearSiteConfigCache } from "@/lib/site-config"
 
 export async function GET() {
   try {
@@ -42,16 +43,22 @@ export async function PUT(req: Request) {
     const { type, ...data } = body
 
     if (type === "site_settings") {
+      const settingsData = {
+        ...data,
+        updated_at: new Date(),
+      }
+
       // Check if settings exist
       const existing = await queryFirst("SELECT id FROM site_settings LIMIT 1")
 
       if (existing) {
-        await updateRecord("site_settings", data, "id = ?", [existing.id])
+        await updateRecord("site_settings", settingsData, "id = ?", [existing.id])
       } else {
-        // Insert new settings if none exist
-        const { insertRecord } = await import("@/lib/database")
-        await insertRecord("site_settings", data)
+        settingsData.created_at = new Date()
+        await insertRecord("site_settings", settingsData)
       }
+
+      clearSiteConfigCache()
     }
 
     return NextResponse.json({ success: true })

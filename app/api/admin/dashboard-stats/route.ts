@@ -12,20 +12,22 @@ export async function GET() {
     )
 
     const totalContacts = await queryFirst<{ count: number }>(
-      "SELECT COUNT(*) as count FROM user_registrations WHERE contact_email IS NOT NULL OR mobile IS NOT NULL",
+      "SELECT COUNT(*) as count FROM user_registrations WHERE email IS NOT NULL OR mobile IS NOT NULL",
     )
 
-    const totalPayments = await queryFirst<{ total: number }>(
-      `SELECT COALESCE(SUM(registration_amount), 0) as total 
-       FROM user_registrations 
-       WHERE payment_status = 'verified'`,
+    const siteSettings = await queryFirst<{ registration_amount: number }>(
+      "SELECT registration_amount FROM site_settings ORDER BY id DESC LIMIT 1",
     )
+
+    const verifiedCount = totalTickets?.count || 0
+    const registrationAmount = siteSettings?.registration_amount || 447
+    const totalPayments = verifiedCount * registrationAmount
 
     const stats = {
       totalTickets: totalTickets?.count || 0,
       registeredUsers: registeredUsers?.count || 0,
       contacts: totalContacts?.count || 0,
-      totalPayments: Math.round((totalPayments?.total || 0) / 1000), // Convert to thousands for display
+      totalPayments: Math.round(totalPayments), // Show actual payment total
     }
 
     return NextResponse.json(stats)

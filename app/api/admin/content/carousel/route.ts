@@ -1,12 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth"
-import { queryAll, insertRecord } from "@/lib/database"
+import { queryAll, insertRecord, updateRecord, deleteRecord } from "@/lib/database"
 
 export async function GET() {
   try {
     const images = await queryAll(`
       SELECT * FROM carousel_images 
-      WHERE is_active = TRUE
       ORDER BY display_order ASC, created_at DESC
     `)
     return NextResponse.json(images)
@@ -23,13 +22,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { image_url, alt_text, cta_text, cta_link, display_order, is_active } = await request.json()
+    const { title, image_url, alt_text, link_url, display_order, is_active } = await request.json()
 
     const imageId = await insertRecord("carousel_images", {
+      title,
       image_url,
       alt_text,
-      cta_text,
-      cta_link,
+      link_url,
       display_order: display_order || 0,
       is_active: is_active !== false,
     })
@@ -38,5 +37,61 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error creating carousel image:", error)
     return NextResponse.json({ error: "Failed to create carousel image" }, { status: 500 })
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const token = request.headers.get("authorization")?.replace("Bearer ", "")
+    if (!token || !verifyAuth(token)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const { id, title, image_url, alt_text, link_url, display_order, is_active } = await request.json()
+
+    if (!id) {
+      return NextResponse.json({ error: "Image ID is required" }, { status: 400 })
+    }
+
+    await updateRecord(
+      "carousel_images",
+      {
+        title,
+        image_url,
+        alt_text,
+        link_url,
+        display_order,
+        is_active,
+      },
+      "id = ?",
+      [id],
+    )
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error("Error updating carousel image:", error)
+    return NextResponse.json({ error: "Failed to update carousel image" }, { status: 500 })
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const token = request.headers.get("authorization")?.replace("Bearer ", "")
+    if (!token || !verifyAuth(token)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get("id")
+
+    if (!id) {
+      return NextResponse.json({ error: "Image ID is required" }, { status: 400 })
+    }
+
+    await deleteRecord("carousel_images", "id = ?", [Number.parseInt(id)])
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error("Error deleting carousel image:", error)
+    return NextResponse.json({ error: "Failed to delete carousel image" }, { status: 500 })
   }
 }

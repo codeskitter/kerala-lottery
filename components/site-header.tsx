@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 const links = [
   { href: "/", label: "HOME" },
@@ -15,21 +15,55 @@ const links = [
 export function SiteHeader() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  const [siteName, setSiteName] = useState("KERALA STATE LOTTERIES")
+
+  useEffect(() => {
+    const fetchSiteConfig = async () => {
+      try {
+        const response = await fetch("/api/site-config")
+        if (response.ok) {
+          const config = await response.json()
+          setSiteName(config.site_name || "KERALA STATE LOTTERIES")
+        }
+      } catch (error) {
+        console.error("Failed to fetch site config:", error)
+        // Keep default fallback name
+      }
+    }
+
+    fetchSiteConfig()
+  }, [])
+
+  const getDisplayName = () => {
+    if (siteName.toLowerCase().includes("lotteries")) {
+      const parts = siteName.split(/\s+/)
+      const lotteriesIndex = parts.findIndex((part) => part.toLowerCase().includes("lotteries"))
+      if (lotteriesIndex > 0) {
+        return {
+          main: parts.slice(0, lotteriesIndex).join(" ").toUpperCase(),
+          suffix: parts.slice(lotteriesIndex).join(" ").toUpperCase(),
+        }
+      }
+    }
+    return {
+      main: siteName.toUpperCase(),
+      suffix: "LOTTERIES",
+    }
+  }
+
+  const displayName = getDisplayName()
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       {/* Slim top info bar */}
-      <div className="hidden border-b border-black/10 bg-[#f9fafb] text-[12px] text-[#111827] md:block">
-        
-      </div>
+      <div className="hidden border-b border-black/10 bg-[#f9fafb] text-[12px] text-[#111827] md:block"></div>
 
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         {/* Brand */}
         <Link href="/" className="flex items-center gap-2">
-          {/* Slightly bolder brand styling */}
-          <span className="font-heading text-xl font-extrabold tracking-wide text-brand">KERALA STATE</span>
+          <span className="font-heading text-xl font-extrabold tracking-wide text-brand">{displayName.main}</span>
           <span className="rounded-md border px-2 py-1 text-[11px] font-semibold text-[#1f2937] bg-yellow-50 border-yellow-200">
-            LOTTERIES
+            {displayName.suffix}
           </span>
         </Link>
 
@@ -88,7 +122,7 @@ export function SiteHeader() {
           >
             {open ? (
               <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M6 6l12 12M6 18L18 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path d="M6 6l12 12M6 12h16M6 18h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
               </svg>
             ) : (
               <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">

@@ -79,9 +79,37 @@ export async function queryCount(table: string, whereClause?: string, params: an
   return result?.count || 0
 }
 
+// Helper function to format datetime values for MySQL
+function formatDateTimeForMySQL(value: any): any {
+  if (value instanceof Date) {
+    return value.toISOString().slice(0, 19).replace("T", " ")
+  }
+  if (typeof value === "string" && value.includes("T") && value.includes("Z")) {
+    return new Date(value).toISOString().slice(0, 19).replace("T", " ")
+  }
+  return value
+}
+
+// Helper function to prepare data for MySQL insertion/update
+function prepareDataForMySQL(data: Record<string, any>): Record<string, any> {
+  const prepared: Record<string, any> = {}
+
+  for (const [key, value] of Object.entries(data)) {
+    // Handle datetime fields
+    if (key.includes("_at") || key.includes("date") || key === "last_login") {
+      prepared[key] = formatDateTimeForMySQL(value)
+    } else {
+      prepared[key] = value
+    }
+  }
+
+  return prepared
+}
+
 export async function insertRecord(table: string, data: Record<string, any>): Promise<number> {
-  const fields = Object.keys(data)
-  const values = Object.values(data)
+  const preparedData = prepareDataForMySQL(data)
+  const fields = Object.keys(preparedData)
+  const values = Object.values(preparedData)
   const placeholders = fields.map(() => "?").join(", ")
 
   const query = `INSERT INTO ${table} (${fields.join(", ")}) VALUES (${placeholders})`
@@ -95,8 +123,9 @@ export async function updateRecord(
   whereClause: string,
   whereParams: any[] = [],
 ): Promise<boolean> {
-  const fields = Object.keys(data)
-  const values = Object.values(data)
+  const preparedData = prepareDataForMySQL(data)
+  const fields = Object.keys(preparedData)
+  const values = Object.values(preparedData)
   const setClause = fields.map((field) => `${field} = ?`).join(", ")
 
   const query = `UPDATE ${table} SET ${setClause} WHERE ${whereClause}`

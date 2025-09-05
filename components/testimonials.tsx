@@ -1,10 +1,17 @@
 "use client"
 import useSWR from "swr"
+import type { ContentData } from "@/lib/content"
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
-export function Testimonials() {
-  const { data: testimonials } = useSWR("/api/admin/content/testimonials", fetcher)
+interface TestimonialsProps {
+  contentData?: ContentData
+}
+
+export function Testimonials({ contentData }: TestimonialsProps) {
+  const { data: apiTestimonials } = useSWR(contentData ? null : "/api/admin/content/testimonials", fetcher)
+
+  const testimonials = contentData?.testimonials || apiTestimonials || []
 
   return (
     <section className="relative">

@@ -2,52 +2,146 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useState, useEffect } from "react"
+import { getSiteConfig } from "@/lib/site-config"
+import {
+  LayoutDashboard,
+  Ticket,
+  Users,
+  MessageSquare,
+  CreditCard,
+  Settings,
+  Trophy,
+  FileText,
+  HelpCircle,
+  ChevronLeft,
+  ChevronRight,
+  User,
+  LogOut,
+  UserCheck,
+  Images,
+} from "lucide-react"
 
 const links = [
-  { href: "/admin", label: "Dashboard" },
-  { href: "/admin/draws", label: "Draws" },
-  { href: "/admin/results", label: "Results & Winners" },
-  { href: "/admin/prizes", label: "Prizes" },
-  { href: "/admin/content", label: "Content" },
-  { href: "/admin/testimonials", label: "Testimonials" },
-  { href: "/admin/faqs", label: "FAQs" },
-  { href: "/admin/settings", label: "Settings" },
+  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/registrations", label: "Registrations", icon: UserCheck, badge: 3 }, // Added registrations link
+  { href: "/admin/tickets", label: "Ticket Management", icon: Ticket },
+  { href: "/admin/users", label: "User Management", icon: Users },
+  { href: "/admin/contacts", label: "Contact Management", icon: MessageSquare, badge: 5 },
+  { href: "/admin/payments", label: "Payment Management", icon: CreditCard },
+  { href: "/admin/draws", label: "Draws", icon: Trophy },
+  { href: "/admin/results", label: "Results & Winners", icon: Trophy },
+  { href: "/admin/prizes", label: "Prizes", icon: Trophy },
+  { href: "/admin/content", label: "Content", icon: FileText },
+  { href: "/admin/carousel", label: "Carousel Management", icon: Images }, // Added carousel management link
+  { href: "/admin/testimonials", label: "Testimonials", icon: MessageSquare },
+  { href: "/admin/faqs", label: "FAQs", icon: HelpCircle },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
 ]
 
 export function AdminSidebar() {
   const pathname = usePathname()
-  const currentPathname = typeof window !== "undefined" ? window.location.pathname : pathname
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [siteName, setSiteName] = useState("Admin Panel")
+
+  useEffect(() => {
+    getSiteConfig().then((config) => {
+      setSiteName(`${config.site_name} Admin`)
+    })
+  }, [])
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/admin/logout", { method: "POST" })
+      window.location.href = "/admin/login"
+    } catch (error) {
+      console.error("Logout failed:", error)
+    }
+  }
+
   return (
     <aside
-      className="hidden md:flex md:w-64 shrink-0 flex-col border-r bg-[var(--sidebar)]"
-      aria-label="Admin navigation"
+      className={`${isCollapsed ? "w-16" : "w-64"} bg-gray-900 text-white flex flex-col h-screen transition-all duration-300 relative`}
     >
-      <div className="h-14 flex items-center px-4 border-b">
-        <span className="font-heading font-semibold text-lg text-foreground">Admin</span>
+      <div className="p-6 border-b border-gray-800 flex items-center justify-between">
+        {!isCollapsed && <h1 className="text-xl font-semibold text-white">{siteName}</h1>}
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="p-1 rounded-lg hover:bg-gray-800 transition-colors"
+          title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+        </button>
       </div>
-      <nav className="p-2">
-        <ul className="space-y-1">
-          {links.map((l) => {
-            const active = currentPathname === l.href || currentPathname?.startsWith(l.href + "/")
+
+      <nav className="flex-1 p-4">
+        <ul className="space-y-2">
+          {links.map((link) => {
+            const Icon = link.icon
+            const isActive = pathname === link.href || (link.href !== "/admin" && pathname?.startsWith(link.href))
+
             return (
-              <li key={l.href}>
+              <li key={link.href}>
                 <Link
-                  href={l.href}
-                  className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm transition ${
-                    active
-                      ? "bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)]"
-                      : "text-[var(--sidebar-foreground)] hover:bg-[var(--sidebar-accent)]/60"
+                  href={link.href}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors relative ${
+                    isActive ? "bg-purple-600 text-white" : "text-gray-300 hover:bg-gray-800 hover:text-white"
                   }`}
+                  title={isCollapsed ? link.label : undefined}
                 >
-                  {l.label}
+                  <Icon className="w-5 h-5 flex-shrink-0" />
+                  {!isCollapsed && (
+                    <>
+                      <span className="truncate">{link.label}</span>
+                      {link.badge && (
+                        <span className="ml-auto bg-red-500 text-white text-xs rounded-full px-2 py-0.5 min-w-[20px] text-center">
+                          {link.badge}
+                        </span>
+                      )}
+                    </>
+                  )}
+                  {isCollapsed && link.badge && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {link.badge}
+                    </span>
+                  )}
+                  {/* Tooltip for collapsed state */}
+                  {isCollapsed && (
+                    <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                      {link.label}
+                      {link.badge && (
+                        <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">
+                          {link.badge}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </Link>
               </li>
             )
           })}
         </ul>
       </nav>
-      <div className="mt-auto p-3">
-        <div className="text-xs text-muted">v1.0</div>
+
+      <div className="p-4 border-t border-gray-800">
+        <div className={`flex items-center gap-3 ${isCollapsed ? "justify-center" : ""}`}>
+          <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+            <User className="w-4 h-4" />
+          </div>
+          {!isCollapsed && (
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-white truncate">Admin User</p>
+              <p className="text-xs text-gray-400 truncate">admin@keralajackpot.com</p>
+            </div>
+          )}
+          <button
+            onClick={handleLogout}
+            className="p-1 rounded-lg hover:bg-gray-800 transition-colors flex-shrink-0"
+            title="Logout"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </aside>
   )

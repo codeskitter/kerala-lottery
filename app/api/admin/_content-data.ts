@@ -1,5 +1,3 @@
-// Content Management Data Store
-
 export type ContentSection = {
   id: string
   section_key: string

@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import "./globals.css"
 import { ShowWhenPublic } from "@/components/admin/show-when-public"
+import { getSiteConfig } from "@/lib/site-config"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -18,13 +19,18 @@ const poppins = Poppins({
   variable: "--font-heading",
 })
 
-export const metadata: Metadata = {
-  title: "Mega Kerala Lottery",
-  description: "Kerala lottery website",
-    generator: 'v0.app'
+export async function generateMetadata(): Promise<Metadata> {
+  const siteConfig = await getSiteConfig()
+
+  return {
+    title: siteConfig.site_name,
+    description: `${siteConfig.site_name} - Your Gateway to Fortune`,
+  }
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const siteConfig = await getSiteConfig()
+
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable} antialiased`}>
       <body className="bg-background text-foreground">
@@ -53,7 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </a>
 
           <a
-            href="https://wa.me/+919668643802"
+            href={`https://wa.me/${siteConfig.contact_phone.replace(/[^0-9]/g, "")}`}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Chat with us on WhatsApp"
